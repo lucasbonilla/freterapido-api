@@ -1,13 +1,21 @@
-version: "3.3"
+version: "3.8"
 
+name:
+  freterapido-application
 
+networks:
+  freterapido_application:
+    name:
+      freterapido-app
+    drive:
+      bridge
 
 services:
   postgres:
     image: postgres:16.1-alpine3.19
-    container_name: postgres
+    container_name: db-freterapido-api
     networks:
-      - freterapidoapplication
+      - freterapido-app
     ports:
       - 5432:5432
     volumes:
@@ -21,19 +29,15 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
   freterapido-api:
     image: freterapido-api:latest
     container_name: freterapido_api
     networks:
-      - freterapidoapplication
+      - freterapido_app
     ports:
       - 8080:8080
-    restart: always
 
-networks:
-  freterapidoapplication:
-    name: freterapidoapplication
-    driver: bridge
 
 volumes:
   postgres:

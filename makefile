@@ -16,9 +16,11 @@ build:
 	docker build --rm -t $(APP_NAME) .
 
 run:
-	docker run -p 8081:8081 $(APP_NAME)
+	docker run -p 8080:8080 $(APP_NAME)
 	
 build-run:
 	docker build --rm -t $(APP_NAME) .
 	docker run -p 8080:8080 $(APP_NAME)
 
+test:
+	docker build --rm -t $(APP_NAME) .

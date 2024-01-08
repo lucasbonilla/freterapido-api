@@ -3,12 +3,14 @@ package config
 import (
 	"github.com/lucasbonilla/freterapido-api/internal/schemas/api"
 	"github.com/lucasbonilla/freterapido-api/internal/schemas/db"
+	"github.com/lucasbonilla/freterapido-api/internal/schemas/freterapido"
 	"github.com/spf13/viper"
 )
 
 type Adapter struct {
-	APIConfig *api.Config
-	DBConfig  *db.Config
+	APIConfig      *api.Config
+	DBConfig       *db.Config
+	APIFreterapido *freterapido.FreterapidoAPI
 }
 
 func NewAdpter() *Adapter {
@@ -25,7 +27,10 @@ func NewAdpter() *Adapter {
 		}
 	}
 
-	apiConfig := api.NewConfig(viper.GetString("api.port"), viper.GetString("run.type"))
+	apiConfig := api.NewConfig(
+		viper.GetString("api.port"),
+		viper.GetString("run.type"))
+
 	dbConfig := db.NewConfig(
 		viper.GetString("database.host"),
 		viper.GetString("database.port"),
@@ -33,9 +38,19 @@ func NewAdpter() *Adapter {
 		viper.GetString("database.pass"),
 		viper.GetString("database.name"))
 
+	freterapidoAPI := freterapido.NewConfig(
+		viper.GetString("freterapido_api.base_url"),
+		viper.GetString("freterapido_api.api_version"),
+		viper.GetString("freterapido_api.registered_number"),
+		viper.GetString("freterapido_api.token"),
+		viper.GetString("freterapido_api.platform_code"),
+		viper.GetInt("freterapido_api.zipcode"),
+	)
+
 	return &Adapter{
-		APIConfig: apiConfig,
-		DBConfig:  dbConfig,
+		APIConfig:      apiConfig,
+		DBConfig:       dbConfig,
+		APIFreterapido: freterapidoAPI,
 	}
 }
 
@@ -49,4 +64,8 @@ func (cA *Adapter) GetServerPort() string {
 
 func (cA *Adapter) RunType() string {
 	return cA.APIConfig.RunType
+}
+
+func (cA *Adapter) GetFreterapidoAPI() *freterapido.FreterapidoAPI {
+	return cA.APIFreterapido
 }

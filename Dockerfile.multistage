@@ -1,0 +1,30 @@
+FROM golang:1.21.0-bullseye AS build-stage
+
+ENV APP_NAME freterapido-api
+ENV CMD_PATH cmd/app/main.go
+
+WORKDIR $GOPATH/src/$APP_NAME
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . $GOPATH/src/$APP_NAME
+
+RUN CGO_ENABLED=0 go build -v -o /$APP_NAME $GOPATH/src/$APP_NAME/$CMD_PATH
+
+# Run the tests in the container
+FROM build-stage AS run-test-stage
+RUN go test -v ./...
+
+# Deploy the application binary into a lean image
+FROM gcr.io/distroless/base-debian11 AS build-release-stage
+
+WORKDIR /
+
+COPY --from=build-stage /$APP_NAME /$APP_NAME
+
+EXPOSE 8080
+
+USER nonroot:nonroot
+
+ENTRYPOINT ["/$APP_NAME"]
