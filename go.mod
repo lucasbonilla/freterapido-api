@@ -1,10 +1,9 @@
 module github.com/lucasbonilla/freterapido-api
 
-go 1.21.4
+go 1.21.5
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/go-playground/assert/v2 v2.2.0
 	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.18.2
 )
