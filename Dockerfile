@@ -1,6 +1,6 @@
 # Build Stage
 # First pull Golang image
-FROM golang:1.21.0-bullseye as build
+FROM golang:1.21.5-bullseye as build
  
 # Set environment variable
 ENV APP_NAME freterapido-api
