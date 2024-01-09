@@ -4,9 +4,9 @@ import (
 	apiFRResp "github.com/lucasbonilla/freterapido-api/internal/schemas/message/response/frerapidoapi"
 )
 
-func NewResponse(APIresp *apiFRResp.Response) *Response {
+func NewResponse(apiResp *apiFRResp.Response) *Response {
 	response := &Response{}
-	for _, offer := range APIresp.Dispatchers[0].Offers {
+	for _, offer := range apiResp.Dispatchers[0].Offers {
 		response.Carrier = append(response.Carrier, Carrier{
 			Name:     offer.Carrier.Name,
 			Service:  offer.Service,
@@ -14,6 +14,7 @@ func NewResponse(APIresp *apiFRResp.Response) *Response {
 			Price:    offer.CostPrice,
 		})
 	}
+
 	return response
 }
 

@@ -16,7 +16,7 @@ func NewAdapter() *Adapter {
 func (mA *Adapter) SendSuccess(ctx *gin.Context, op string, data interface{}) {
 	ctx.Header("Content-Type", "application/json")
 	ctx.JSON(http.StatusOK, gin.H{
-		"message": fmt.Sprintf("operation from route: %s successfull", op),
+		"message": fmt.Sprintf("operation from route: %s successful", op),
 		"data":    data,
 	})
 }
@@ -24,7 +24,7 @@ func (mA *Adapter) SendSuccess(ctx *gin.Context, op string, data interface{}) {
 func (mA *Adapter) SendSuccessWithCustomKey(ctx *gin.Context, key string, op string, data interface{}) {
 	ctx.Header("Content-Type", "application/json")
 	ctx.JSON(http.StatusOK, gin.H{
-		"message": fmt.Sprintf("operation from route: %s successfull", op),
+		"message": fmt.Sprintf("operation from route: %s successful", op),
 		key:       data,
 	})
 }

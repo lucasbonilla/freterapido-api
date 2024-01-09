@@ -19,6 +19,7 @@ type Adapter struct {
 func NewAdapter(config ports.Config) *Adapter {
 	writer := io.Writer(os.Stdout)
 	logger := log.New(writer, config.RunType(), log.Ldate|log.Ltime)
+
 	return &Adapter{
 		debug:   log.New(writer, "DEBUG: ", logger.Flags()),
 		info:    log.New(writer, "INFO: ", logger.Flags()),

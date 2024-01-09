@@ -17,22 +17,24 @@ func NewAdapter(config ports.Config) *Adapter {
 	return &Adapter{config: config}
 }
 
-func (dbA *Adapter) InitConn() {
+func (dbA *Adapter) InitConn() error {
 	var err error
 	conf := dbA.config.GetDB()
-	sc := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+	stringConn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		conf.Host,
 		conf.Port,
 		conf.User,
 		conf.Pass,
 		conf.Database,
 	)
-	fmt.Println(sc)
+	fmt.Println(stringConn)
 
-	dbA.DB, err = sql.Open("postgres", sc)
+	dbA.DB, err = sql.Open("postgres", stringConn)
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }
 
 func (dbA *Adapter) Ping() error {

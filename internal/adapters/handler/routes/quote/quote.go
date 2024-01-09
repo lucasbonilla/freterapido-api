@@ -2,8 +2,7 @@ package quote
 
 import (
 	"bytes"
-	"encoding/json"
-	"io"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,52 +15,82 @@ import (
 
 type Adapter struct {
 	db      ports.Postgres
+	http    ports.Http
 	message ports.Message
 	core    ports.Core
 	config  ports.Config
+	utils   ports.Utils
 }
 
-func NewAdapter(db ports.Postgres, message ports.Message, core ports.Core, config ports.Config) *Adapter {
+func NewAdapter(db ports.Postgres, http ports.Http, message ports.Message, core ports.Core, config ports.Config, utils ports.Utils) *Adapter {
 	return &Adapter{
 		db:      db,
+		http:    http,
 		message: message,
 		core:    core,
 		config:  config,
+		utils:   utils,
 	}
 }
 
 func (qA *Adapter) Quote(ctx *gin.Context) {
-	request := APIReq.Request{}
-	if err := ctx.BindJSON(&request); err != nil {
-		qA.message.SendError(ctx, http.StatusBadRequest, err.Error())
-		return
-	}
+	var request *APIReq.Request
+	requestToBind := APIReq.Request{}
+	var ok bool
+	reqBind, err := qA.utils.BindJSON(ctx, &requestToBind)
 
-	if err := qA.core.ValidateAPIRequest(request); len(err) != 0 {
-		qA.message.SendErrors(ctx, http.StatusBadRequest, err)
-		return
+	if request, ok = reqBind.(*APIReq.Request); !ok {
+		qA.message.SendError(ctx, http.StatusInternalServerError,
+			"Ocorreu um erro ao realizar bind da request")
 	}
+	fmt.Println(request)
 
-	reqFR := APIFRReq.NewRequest(request, qA.config.GetFreterapidoAPI())
-	body, err := json.Marshal(reqFR)
 	if err != nil {
 		qA.message.SendError(ctx, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
-	payload := bytes.NewBuffer(body)
-	resp, err := http.Post("https://sp.freterapido.com/api/v3/quote/simulate", "application/json", payload)
+	if err := qA.core.ValidateAPIRequest(*request); len(err) != 0 {
+		qA.message.SendErrors(ctx, http.StatusBadRequest, err)
+
+		return
+	}
+
+	reqFR := APIFRReq.NewRequest(*request, qA.config.GetFreterapidoAPI())
+	body, err := qA.utils.JSONMarshal(reqFR)
+	if err != nil {
+		qA.message.SendError(ctx, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	payload := bytes.NewReader(body)
+
+	req, _ := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		"https://sp.freterapido.com/api/v3/quote/simulate",
+		payload)
+
+	resp, err := qA.http.Do(req)
 	if err != nil {
 		qA.message.SendError(ctx, resp.StatusCode, err.Error())
 	}
 
 	APIresp := new(APIFRResp.Response)
-	json.NewDecoder(resp.Body).Decode(APIresp)
-	body, err = io.ReadAll(resp.Body)
+	responseToDecode := APIFRResp.Response{}
+	respDecode, err := qA.utils.JSONDecode(resp.Body, &responseToDecode)
 	if err != nil {
 		qA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
 	}
-	defer resp.Body.Close()
+
+	defer qA.http.Close()
+
+	if APIresp, ok = respDecode.(*APIFRResp.Response); !ok {
+		qA.message.SendError(ctx, http.StatusInternalServerError,
+			"Ocorreu um erro ao realizar bind da request")
+	}
 
 	respAPI := APIResp.NewResponse(APIresp)
 	qA.message.SendSuccessWithCustomKey(ctx, "carrier", "quote", respAPI.Carrier)

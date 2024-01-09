@@ -5,9 +5,9 @@ type Config struct {
 	RunType string
 }
 
-func NewConfig(APIPort string, RunType string) *Config {
+func NewConfig(apiPort string, runType string) *Config {
 	return &Config{
-		APIPort: APIPort,
-		RunType: RunType,
+		APIPort: apiPort,
+		RunType: runType,
 	}
 }

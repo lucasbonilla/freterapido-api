@@ -5,7 +5,7 @@ type Response struct {
 }
 
 type Carrier struct {
-	Reference        int    `json:"reference"`
+	Reference        string `json:"reference"`
 	Name             string `json:"name"`
 	RegisteredNumber string `json:"registered_number"`
 	StateInscription string `json:"state_inscription"`

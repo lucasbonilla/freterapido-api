@@ -1,6 +1,6 @@
 package ports
 
 type Postgres interface {
-	InitConn()
+	InitConn() error
 	Ping() error
 }
