@@ -23,4 +23,4 @@ build-run:
 	docker run -p 8080:8080 $(APP_NAME)
 
 test:
-	docker build --rm -t $(APP_NAME) .
+	docker build -f Dockerfile.multistage -t docker-freterapido-api-test --progress plain --no-cache --target run-test-stage .

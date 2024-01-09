@@ -1,4 +1,4 @@
-FROM golang:1.21.0-bullseye AS build-stage
+FROM golang:1.21.5-bullseye AS build-stage
 
 ENV APP_NAME freterapido-api
 ENV CMD_PATH cmd/app/main.go
