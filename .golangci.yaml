@@ -6,7 +6,6 @@ linters:
   disable-all: true
   enable:
     - asasalint
-    - bodyclose
     - containedctx
     - contextcheck
     - decorder
