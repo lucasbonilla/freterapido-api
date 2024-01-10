@@ -10,7 +10,7 @@ func NewResponse(apiResp *apiFRResp.Response) *Response {
 		response.Carrier = append(response.Carrier, Carrier{
 			Name:     offer.Carrier.Name,
 			Service:  offer.Service,
-			Deadline: offer.DeliveryTime.EstimatedDate,
+			Deadline: offer.DeliveryTime.Days,
 			Price:    offer.CostPrice,
 		})
 	}
@@ -25,6 +25,6 @@ type Response struct {
 type Carrier struct {
 	Name     string  `json:"name"`
 	Service  string  `json:"service"`
-	Deadline string  `json:"deadline"`
+	Deadline int     `json:"deadline"`
 	Price    float64 `json:"price"`
 }

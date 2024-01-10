@@ -7,8 +7,8 @@ type Response struct {
 type Carrier struct {
 	Reference        string `json:"reference"`
 	Name             string `json:"name"`
-	RegisteredNumber string `json:"registered_number"`
-	StateInscription string `json:"state_inscription"`
+	RegisteredNumber string `json:"registeredNumber"`
+	StateInscription string `json:"stateInscription"`
 	Logo             string `json:"logo"`
 }
 
@@ -16,7 +16,7 @@ type DeliveryTime struct {
 	Days          int    `json:"days,omitempty"`
 	Hours         int    `json:"hours,omitempty"`
 	Minutes       int    `json:"minutes,omitempty"`
-	EstimatedDate string `json:"estimated_date"`
+	EstimatedDate string `json:"estimatedDate"`
 }
 
 type Weights struct {
@@ -33,19 +33,19 @@ type SubTotal1 struct {
 	Ferry           int `json:"ferry,omitempty"`
 	Suframa         int `json:"suframa,omitempty"`
 	Tas             int `json:"tas,omitempty"`
-	SecCat          int `json:"sec_cat,omitempty"`
+	SecCat          int `json:"SecCat,omitempty"`
 	Dat             int `json:"dat,omitempty"`
-	AdValorem       int `json:"ad_valorem,omitempty"`
+	AdValorem       int `json:"AdValorem,omitempty"`
 	Ademe           int `json:"ademe,omitempty"`
 	Gris            int `json:"gris,omitempty"`
 	Emex            int `json:"emex,omitempty"`
 	Interior        int `json:"interior,omitempty"`
 	Capatazia       int `json:"capatazia,omitempty"`
 	River           int `json:"river,omitempty"`
-	RiverInsurance  int `json:"river_insurance,omitempty"`
+	RiverInsurance  int `json:"RiverInsurance,omitempty"`
 	Toll            int `json:"toll,omitempty"`
 	Other           int `json:"other,omitempty"`
-	OtherPerProduct int `json:"other_per_product,omitempty"`
+	OtherPerProduct int `json:"OtherPerProduct,omitempty"`
 }
 
 type SubTotal2 struct {
@@ -60,41 +60,41 @@ type SubTotal3 struct {
 }
 
 type Composition struct {
-	FreightWeight       float64   `json:"freight_weight"`
-	FreightWeightExcess float64   `json:"freight_weight_excess"`
-	FreightWeightVolume float64   `json:"freight_weight_volume"`
-	FreightVolume       float64   `json:"freight_volume"`
-	FreightMinimum      float64   `json:"freight_minimum"`
-	FreightInvoice      float64   `json:"freight_invoice"`
-	SubTotal1           SubTotal1 `json:"sub_total1"`
-	SubTotal2           SubTotal2 `json:"sub_total2"`
-	SubTotal3           SubTotal3 `json:"sub_total3"`
+	FreightWeight       float64   `json:"FreightWeight"`
+	FreightWeightExcess float64   `json:"FreightWeightExcess"`
+	FreightWeightVolume float64   `json:"FreightWeightVolume"`
+	FreightVolume       float64   `json:"FreightVolume"`
+	FreightMinimum      float64   `json:"FreightMinimum"`
+	FreightInvoice      float64   `json:"FreightInvoice"`
+	SubTotal1           SubTotal1 `json:"SubTotal1"`
+	SubTotal2           SubTotal2 `json:"SubTotal2"`
+	SubTotal3           SubTotal3 `json:"SubTotal3"`
 }
 
 type OriginalDeliveryTime struct {
 	Days          int    `json:"days,omitempty"`
 	Hours         int    `json:"hours,omitempty"`
 	Minutes       int    `json:"minutes,omitempty"`
-	EstimatedDate string `json:"estimated_date,omitempty"`
+	EstimatedDate string `json:"estimatedDate,omitempty"`
 }
 
 type Offers struct {
 	Offer                int                  `json:"offer"`
-	SimulationType       int                  `json:"simulation_type"`
+	SimulationType       int                  `json:"simulationType"`
 	Carrier              Carrier              `json:"carrier"`
 	Service              string               `json:"service"`
-	ServiceCode          string               `json:"service_code,omitempty"`
-	ServiceDescription   string               `json:"service_description,omitempty"`
-	DeliveryTime         DeliveryTime         `json:"delivery_time"`
+	ServiceCode          string               `json:"serviceCode,omitempty"`
+	ServiceDescription   string               `json:"serviceDescription,omitempty"`
+	DeliveryTime         DeliveryTime         `json:"deliveryTime"`
 	Expiration           string               `json:"expiration"`
-	CostPrice            float64              `json:"cost_price"`
-	FinalPrice           float64              `json:"final_price"`
+	CostPrice            float64              `json:"costPrice"`
+	FinalPrice           float64              `json:"finalPrice"`
 	Weights              Weights              `json:"weights"`
 	Composition          Composition          `json:"composition,omitempty"`
-	OriginalDeliveryTime OriginalDeliveryTime `json:"original_delivery_time,omitempty"`
+	OriginalDeliveryTime OriginalDeliveryTime `json:"originalDeliveryTime,omitempty"`
 	Identifier           string               `json:"identifier,omitempty"`
-	DeliveryNote         string               `json:"delivery_note,omitempty"`
-	HomeDelivery         bool                 `json:"home_delivery,omitempty"`
+	DeliveryNote         string               `json:"DeliveryNote,omitempty"`
+	HomeDelivery         bool                 `json:"homeDelivery,omitempty"`
 }
 
 type Volumes struct {
@@ -106,9 +106,9 @@ type Volumes struct {
 	Width         float64 `json:"width"`
 	Height        float64 `json:"height"`
 	Length        float64 `json:"length"`
-	UnitaryWeight float64 `json:"unitary_weight"`
-	UnitaryPrice  float64 `json:"unitary_price"`
-	AmountVolumes float64 `json:"amount_volumes,omitempty"`
+	UnitaryWeight float64 `json:"UnitaryWeight"`
+	UnitaryPrice  float64 `json:"UnitaryPrice"`
+	AmountVolumes float64 `json:"AmountVolumes,omitempty"`
 	Consolidate   bool    `json:"consolidate,omitempty"`
 	Overlaid      bool    `json:"overlaid,omitempty"`
 	Rotate        bool    `json:"rotate,omitempty"`
@@ -117,10 +117,10 @@ type Volumes struct {
 
 type Dispatchers struct {
 	ID                         string    `json:"id"`
-	RequestID                  string    `json:"request_id"`
-	RegisteredNumberShipper    string    `json:"registered_number_shipper"`
-	RegisteredNumberDispatcher string    `json:"registered_number_dispatcher"`
-	ZipcodeOrigin              int       `json:"zipcode_origin"`
+	RequestID                  string    `json:"RequestID"`
+	RegisteredNumberShipper    string    `json:"RegisteredNumberShipper"`
+	RegisteredNumberDispatcher string    `json:"RegisteredNumberDispatcher"`
+	ZipcodeOrigin              int       `json:"ZipcodeOrigin"`
 	Offers                     []Offers  `json:"offers,omitempty"`
 	Volumes                    []Volumes `json:"volumes,omitempty"`
 }

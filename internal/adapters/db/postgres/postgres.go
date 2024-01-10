@@ -37,6 +37,10 @@ func (dbA *Adapter) InitConn() error {
 	return nil
 }
 
+func (dbA *Adapter) Close() error {
+	return dbA.DB.Close()
+}
+
 func (dbA *Adapter) Ping() error {
 	return dbA.DB.Ping()
 }

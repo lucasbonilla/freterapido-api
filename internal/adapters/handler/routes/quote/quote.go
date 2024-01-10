@@ -2,7 +2,6 @@ package quote
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +21,8 @@ type Adapter struct {
 	utils   ports.Utils
 }
 
-func NewAdapter(db ports.Postgres, http ports.Http, message ports.Message, core ports.Core, config ports.Config, utils ports.Utils) *Adapter {
+func NewAdapter(db ports.Postgres, http ports.Http, message ports.Message, core ports.Core, config ports.Config,
+	utils ports.Utils) *Adapter {
 	return &Adapter{
 		db:      db,
 		http:    http,
@@ -43,7 +43,6 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 		qA.message.SendError(ctx, http.StatusInternalServerError,
 			"Ocorreu um erro ao realizar bind da request")
 	}
-	fmt.Println(request)
 
 	if err != nil {
 		qA.message.SendError(ctx, http.StatusBadRequest, err.Error())
@@ -75,23 +74,26 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 
 	resp, err := qA.http.Do(req)
 	if err != nil {
-		qA.message.SendError(ctx, resp.StatusCode, err.Error())
-	}
-
-	APIresp := new(APIFRResp.Response)
-	responseToDecode := APIFRResp.Response{}
-	respDecode, err := qA.utils.JSONDecode(resp.Body, &responseToDecode)
-	if err != nil {
 		qA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
 	}
+	qA.http.SetResponse(resp)
 
 	defer qA.http.Close()
 
-	if APIresp, ok = respDecode.(*APIFRResp.Response); !ok {
-		qA.message.SendError(ctx, http.StatusInternalServerError,
-			"Ocorreu um erro ao realizar bind da request")
+	APIresp := APIFRResp.Response{}
+	bytes, err := qA.utils.ReadAll(resp.Body)
+	if err != nil {
+		qA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+	err = qA.utils.JSONUnmarshal(bytes, &APIresp)
+	if err != nil {
+		qA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
+
+		return
 	}
 
-	respAPI := APIResp.NewResponse(APIresp)
+	respAPI := APIResp.NewResponse(&APIresp)
 	qA.message.SendSuccessWithCustomKey(ctx, "carrier", "quote", respAPI.Carrier)
 }

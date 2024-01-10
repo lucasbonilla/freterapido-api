@@ -15,6 +15,7 @@ func NewAdapter() *Adapter {
 
 func (uA *Adapter) BindJSON(ctx *gin.Context, obj any) (interface{}, error) {
 	err := ctx.BindJSON(obj)
+
 	return obj, err
 }
 
@@ -22,7 +23,10 @@ func (uA *Adapter) JSONMarshal(v any) ([]byte, error) {
 	return json.Marshal(v)
 }
 
-func (uA *Adapter) JSONDecode(r io.Reader, v any) (interface{}, error) {
-	err := json.NewDecoder(r).Decode(v)
-	return v, err
+func (uA *Adapter) ReadAll(body io.ReadCloser) ([]byte, error) {
+	return io.ReadAll(body)
+}
+
+func (uA *Adapter) JSONUnmarshal(data []byte, v any) error {
+	return json.Unmarshal(data, v)
 }

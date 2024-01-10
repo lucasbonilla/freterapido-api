@@ -6,6 +6,10 @@ import (
 	"github.com/lucasbonilla/freterapido-api/internal/schemas/freterapido"
 )
 
+const (
+	zipcode = 10101000
+)
+
 type MockedAdapter struct {
 	APIConfig           *api.Config
 	DBConfig            *db.Config
@@ -20,7 +24,7 @@ func NewMockedAdapter() *MockedAdapter {
 	return &MockedAdapter{
 		APIConfig:      api.NewConfig("8080", "test"),
 		DBConfig:       db.NewConfig("local-test", "15432", "db-test", "db-test", "postgres-test"),
-		APIFreterapido: freterapido.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", 10101000),
+		APIFreterapido: freterapido.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", zipcode),
 	}
 }
 

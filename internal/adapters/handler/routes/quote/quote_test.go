@@ -1,7 +1,6 @@
 package quote
 
 import (
-	"io"
 	"net/http"
 	"testing"
 
@@ -14,7 +13,6 @@ import (
 	"github.com/lucasbonilla/freterapido-api/internal/core"
 	"github.com/lucasbonilla/freterapido-api/internal/ports"
 	"github.com/lucasbonilla/freterapido-api/internal/schemas/message/request/api"
-	APIFRResp "github.com/lucasbonilla/freterapido-api/internal/schemas/message/response/frerapidoapi"
 )
 
 func TestQuote(t *testing.T) {
@@ -90,107 +88,6 @@ func TestQuote(t *testing.T) {
 		},
 		JSONMarshalFn: func(v any) ([]byte, error) {
 			return []byte{}, nil
-		},
-		JSONDecodeFn: func(r io.Reader, v any) (interface{}, error) {
-			FRResponse := APIFRResp.Response{
-				Dispatchers: []APIFRResp.Dispatchers{
-					{
-						ID:                         "1234567890",
-						RequestID:                  "",
-						RegisteredNumberShipper:    "",
-						RegisteredNumberDispatcher: "",
-						ZipcodeOrigin:              0,
-						Offers: []APIFRResp.Offers{
-							{
-								Offer:          1,
-								SimulationType: 0,
-								Carrier: APIFRResp.Carrier{
-									Reference:        "111",
-									Name:             "carrier",
-									RegisteredNumber: "",
-									StateInscription: "",
-									Logo:             "https://logo.com",
-								},
-								Service:            "Correios",
-								ServiceCode:        "",
-								ServiceDescription: "",
-								DeliveryTime: APIFRResp.DeliveryTime{
-									Days:          0,
-									Hours:         0,
-									Minutes:       0,
-									EstimatedDate: "",
-								},
-								Expiration: "2024-02-08T17:25:11.288174565Z",
-								CostPrice:  0,
-								FinalPrice: 0,
-								Weights: APIFRResp.Weights{
-									Real:  13,
-									Cubed: 13.36,
-									Used:  13.36,
-								},
-								Composition: APIFRResp.Composition{
-									FreightWeight:       0,
-									FreightWeightExcess: 0,
-									FreightWeightVolume: 0,
-									FreightVolume:       0,
-									FreightMinimum:      0,
-									FreightInvoice:      0,
-									SubTotal1:           APIFRResp.SubTotal1{},
-									SubTotal2:           APIFRResp.SubTotal2{},
-									SubTotal3:           APIFRResp.SubTotal3{},
-								},
-								OriginalDeliveryTime: APIFRResp.OriginalDeliveryTime{},
-								Identifier:           "",
-								DeliveryNote:         "",
-								HomeDelivery:         false,
-							},
-							{
-								Offer:          1,
-								SimulationType: 0,
-								Carrier: APIFRResp.Carrier{
-									Reference:        "222",
-									Name:             "carrier",
-									RegisteredNumber: "",
-									StateInscription: "",
-									Logo:             "https://logo.com",
-								},
-								Service:            "transportadora_a",
-								ServiceCode:        "",
-								ServiceDescription: "",
-								DeliveryTime: APIFRResp.DeliveryTime{
-									Days:          0,
-									Hours:         0,
-									Minutes:       0,
-									EstimatedDate: "",
-								},
-								Expiration: "2024-02-08T17:25:11.288174565Z",
-								CostPrice:  0,
-								FinalPrice: 0,
-								Weights: APIFRResp.Weights{
-									Real:  13,
-									Cubed: 13.36,
-									Used:  13.36,
-								},
-								Composition: APIFRResp.Composition{
-									FreightWeight:       0,
-									FreightWeightExcess: 0,
-									FreightWeightVolume: 0,
-									FreightVolume:       0,
-									FreightMinimum:      0,
-									FreightInvoice:      0,
-									SubTotal1:           APIFRResp.SubTotal1{},
-									SubTotal2:           APIFRResp.SubTotal2{},
-									SubTotal3:           APIFRResp.SubTotal3{},
-								},
-								OriginalDeliveryTime: APIFRResp.OriginalDeliveryTime{},
-								Identifier:           "",
-								DeliveryNote:         "",
-								HomeDelivery:         false,
-							},
-						},
-						Volumes: []APIFRResp.Volumes{}}}}
-			var response interface{} = &FRResponse
-			return response, nil
 		},
 	}
 
