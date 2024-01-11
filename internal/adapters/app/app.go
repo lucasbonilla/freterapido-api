@@ -39,4 +39,5 @@ func (aA *Adapter) Run() {
 		slog.Error("Error starting the HTTP server", "error", err)
 		os.Exit(1)
 	}
+	aA.dbPostgres.Close()
 }
