@@ -223,7 +223,7 @@ func (dbA *Adapter) GetCheapestQuotes(limit *int, offset *int) (APIResp.TotalQuo
 		c.carrier_name,
 		q.id_carrier
 	ORDER BY
-		price_quote_cheapest DESC `
+		price_quote_cheapest ASC `
 	selectSQL = addLimitOffset(selectSQL, limit, offset)
 
 	rows, err := dbA.DB.Query(selectSQL)
