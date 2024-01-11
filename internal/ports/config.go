@@ -6,7 +6,6 @@ import (
 )
 
 type Config interface {
-	InitConfig() error
 	GetDB() *db.Config
 	GetServerPort() string
 	RunType() string
