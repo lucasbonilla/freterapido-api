@@ -8,14 +8,12 @@ import (
 
 type Adapter struct {
 	cli ports.Cli
-	req ports.Req
 	res ports.Res
 }
 
-func NewAdapter(cli ports.Cli, req ports.Req, res ports.Res) *Adapter {
+func NewAdapter(cli ports.Cli, res ports.Res) *Adapter {
 	return &Adapter{
 		cli: cli,
-		req: req,
 		res: res,
 	}
 }

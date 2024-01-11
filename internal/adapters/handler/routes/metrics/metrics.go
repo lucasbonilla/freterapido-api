@@ -61,6 +61,9 @@ func (mA *Adapter) Metrics(ctx *gin.Context) {
 	}
 	var metrics api.Metrics
 
+	// cada método abaixo faz uma consulta diferente para cada tipo de resposta esperado
+	// caso algum SQL tenha que ser alterado basta alterar na sua unidade ao invés de alterar um sql maior
+	// que levaria mais tempo e mais esforço
 	metrics.QuotesQuantity, _ = mA.db.GetNumberOfQuotes(limit, offset)
 	metrics.TotalQuotesPrice, _ = mA.db.GetTotalQuotes(limit, offset)
 	metrics.TotalQuotesAveragePrice, _ = mA.db.GetAverageQuotes(limit, offset)
