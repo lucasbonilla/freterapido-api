@@ -1,0 +1,56 @@
+run:
+  deadline: 5m
+  tests: false
+
+linters:
+  disable-all: true
+  enable:
+    - asasalint
+    - containedctx
+    - contextcheck
+    - decorder
+    - dogsled
+    - dupl
+    - dupword
+    - durationcheck
+    - exportloopref
+    - forcetypeassert
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - godot
+    - goimports
+    - gomnd
+    - govet
+    - importas
+    - ireturn
+    - lll
+    - loggercheck
+    - maintidx
+    - makezero
+    - misspell
+    - musttag
+    - nakedret
+    - nestif
+    - nilerr
+    - nilnil
+    - nlreturn
+    - noctx
+    - nosprintfhostport
+    - prealloc
+    - reassign
+    - rowserrcheck
+    - sqlclosecheck
+    - tagalign
+    - unconvert
+    - usestdlibvars
+    - varnamelen
+    - wastedassign
+    - whitespace
+
+issues:
+  exclude-use-default: false
+  max-same-issues: 200
+  max-issues-per-linter: 200
