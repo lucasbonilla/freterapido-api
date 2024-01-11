@@ -1,4 +1,4 @@
-package frerapidoapi
+package freterapidoapi
 
 import (
 	"strconv"

@@ -2,6 +2,7 @@ package quote
 
 import (
 	"bytes"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,7 @@ import (
 	APIReq "github.com/lucasbonilla/freterapido-api/internal/schemas/message/request/api"
 	APIFRReq "github.com/lucasbonilla/freterapido-api/internal/schemas/message/request/frerapidoapi"
 	APIResp "github.com/lucasbonilla/freterapido-api/internal/schemas/message/response/api"
-	APIFRResp "github.com/lucasbonilla/freterapido-api/internal/schemas/message/response/frerapidoapi"
+	APIFRResp "github.com/lucasbonilla/freterapido-api/internal/schemas/message/response/freterapidoapi"
 )
 
 type Adapter struct {
@@ -19,10 +20,11 @@ type Adapter struct {
 	core    ports.Core
 	config  ports.Config
 	utils   ports.Utils
+	logger  ports.Logger
 }
 
 func NewAdapter(db ports.Postgres, http ports.Http, message ports.Message, core ports.Core, config ports.Config,
-	utils ports.Utils) *Adapter {
+	utils ports.Utils, logger ports.Logger) *Adapter {
 	return &Adapter{
 		db:      db,
 		http:    http,
@@ -30,6 +32,7 @@ func NewAdapter(db ports.Postgres, http ports.Http, message ports.Message, core 
 		core:    core,
 		config:  config,
 		utils:   utils,
+		logger:  logger,
 	}
 }
 
@@ -38,19 +41,22 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 	requestToBind := APIReq.Request{}
 	var ok bool
 	reqBind, err := qA.utils.BindJSON(ctx, &requestToBind)
-
-	if request, ok = reqBind.(*APIReq.Request); !ok {
-		qA.message.SendError(ctx, http.StatusInternalServerError,
-			"Ocorreu um erro ao realizar bind da request")
+	if err != nil {
+		qA.logger.Errorf("erro json malformatado: %v", err.Error())
+		qA.message.SendError(ctx, http.StatusBadRequest, err.Error())
+		return
 	}
 
-	if err != nil {
-		qA.message.SendError(ctx, http.StatusBadRequest, err.Error())
+	if request, ok = reqBind.(*APIReq.Request); !ok {
+		qA.logger.Errorf("erro json malformatado: %v", err.Error())
+		qA.message.SendError(ctx, http.StatusInternalServerError,
+			"Ocorreu um erro ao realizar bind da request")
 
 		return
 	}
 
 	if err := qA.core.ValidateAPIRequest(*request); len(err) != 0 {
+		qA.logger.Errorf("erro de validação: %v", err)
 		qA.message.SendErrors(ctx, http.StatusBadRequest, err)
 
 		return
@@ -59,7 +65,8 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 	reqFR := APIFRReq.NewRequest(*request, qA.config.GetFreterapidoAPI())
 	body, err := qA.utils.JSONMarshal(reqFR)
 	if err != nil {
-		qA.message.SendError(ctx, http.StatusBadRequest, err.Error())
+		qA.logger.Errorf("erro json marshal: %v", err.Error())
+		qA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
 
 		return
 	}
@@ -69,7 +76,7 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 	req, _ := http.NewRequestWithContext(
 		ctx,
 		http.MethodPost,
-		"https://sp.freterapido.com/api/v3/quote/simulate",
+		fmt.Sprintf("https://%s/%s/quote/simulate", qA.config.GetFreterapidoAPI().BaseURL, qA.config.GetFreterapidoAPI().APIVersion),
 		payload)
 
 	resp, err := qA.http.Do(req)
@@ -95,5 +102,16 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 	}
 
 	respAPI := APIResp.NewResponse(&APIresp)
+
+	err = qA.db.AddCarrier(APIresp.Dispatchers[0].Offers)
+	if err != nil {
+		qA.logger.Errorf("ocorreu um erro ao armazenar transportadoras na base de dados", err.Error())
+	}
+
+	err = qA.db.AddQuote(APIresp.Dispatchers[0].Offers)
+	if err != nil {
+		qA.logger.Errorf("ocorreu um erro ao armazenar cotações na base de dados", err.Error())
+	}
+
 	qA.message.SendSuccessWithCustomKey(ctx, "carrier", "quote", respAPI.Carrier)
 }

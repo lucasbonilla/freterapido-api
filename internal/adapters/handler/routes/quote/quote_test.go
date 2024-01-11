@@ -23,6 +23,7 @@ func TestQuote(t *testing.T) {
 	var coreP ports.Core
 	var configP ports.Config
 	var mockedUtils ports.Utils
+	var logger ports.Logger
 	messageP = &message.MockedAdapter{
 		SendSuccessFn:              func(ctx *gin.Context, op string, data interface{}) { return },
 		SendSuccessWithCustomKeyFn: func(ctx *gin.Context, key, op string, data interface{}) { return },
@@ -91,8 +92,8 @@ func TestQuote(t *testing.T) {
 		},
 	}
 
-	quoteP = NewAdapter(mockedPostgres,
-		mockedHttp, messageP, coreP, configP, mockedUtils)
+	quoteP = NewAdapter(mockedPostgres, mockedHttp, messageP, coreP, configP,
+		mockedUtils, logger)
 
 	var ctx *gin.Context
 

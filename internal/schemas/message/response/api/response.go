@@ -1,7 +1,7 @@
 package api
 
 import (
-	apiFRResp "github.com/lucasbonilla/freterapido-api/internal/schemas/message/response/frerapidoapi"
+	apiFRResp "github.com/lucasbonilla/freterapido-api/internal/schemas/message/response/freterapidoapi"
 )
 
 func NewResponse(apiResp *apiFRResp.Response) *Response {
