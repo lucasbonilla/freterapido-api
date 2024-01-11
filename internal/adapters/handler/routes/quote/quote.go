@@ -48,7 +48,7 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 	}
 
 	if request, ok = reqBind.(*APIReq.Request); !ok {
-		qA.logger.Errorf("erro json malformatado: %v", err.Error())
+		qA.logger.Error("erro json malformatado")
 		qA.message.SendError(ctx, http.StatusInternalServerError,
 			"Ocorreu um erro ao realizar bind da request")
 
@@ -81,21 +81,26 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 
 	resp, err := qA.http.Do(req)
 	if err != nil {
+		qA.logger.Errorf("erro ao realizar requisição: %v", err.Error())
 		qA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
-	}
-	qA.http.SetResponse(resp)
 
+		return
+	}
+
+	qA.http.SetResponse(resp)
 	defer qA.http.Close()
 
 	APIresp := APIFRResp.Response{}
 	bytes, err := qA.utils.ReadAll(resp.Body)
 	if err != nil {
+		qA.logger.Errorf("erro ao ler o corpo da requisição: %v", err.Error())
 		qA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
 
 		return
 	}
 	err = qA.utils.JSONUnmarshal(bytes, &APIresp)
 	if err != nil {
+		qA.logger.Errorf("erro ao realizar unmarshal da requisição: %v", err.Error())
 		qA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
 
 		return
