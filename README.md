@@ -19,7 +19,10 @@ Os comando abaixo devem ser rodados na sequência correta para realizar o build 
     # remove os containers
     make env-remove
     
-
+## Desenvolvimento
+Para o desenvolvimento da solução foi escolhido a arquitetura hexagonal com  ports e adapters. Dessa forma, cada pacote do sistema fica encapsulado permitindo uma maior desacoplagem entre os recursos do sistema.
+Essa independência entre os pacotes permite que o sistema tenha refatorações ou mudanças de tecnologias sem afetar os demais módulos.
+Por exemplo, se no futuro a base de dados passe a utilizar outra solução ao invés de PostgreSQL, basta alterar o pacote postgres para outra tecnologia e realizar ajustes básicos para adequar o projeto como um todo para essa nova solução.
 ## Endpoints
 Para a solução proposta foram desenvolvidos dois endpoints:
 
@@ -138,3 +141,28 @@ Cada chave faz referência a cada uma das informações solicitadas, sendo elas:
 
 A paginação foi adicionada para o caso de muitos resultados. Dessa forma, essa opção pode ser utilizada.
 As consultas de frete mais barato geral e mais caro geral foi desenvolvida para buscar a cotação mais barata e mais cara das n primeiras cotações. A primeira cotação dessa chave, por teoria matemática, será a mais barata geral ou mais cara geral.
+
+## Testes
+Os testes do sistema, escolheu-se os testes unitários na aplicação. Contudo, para termos de comprovação, somente um dos arquivos foi feita a cobertura dos testes, Os demais testes dos demais pacotes que não foram desenvolvidos seguem a mesma lógica de aplicação.
+A arquitetura hexagonal favorece os testes do sistema pois dessa forma é possível realizar o mock dos dados e gerar uma chamada personalizada a um método de alguma biblioteca.
+Um exemplo que gosto de exemplificar são as chamadas à base de dados em que não é necessário testar se o método db.Query realmente está armazenado dados na tabela ou buscando os mesmos da persistência.
+Espera-se que as bibliotecas, que são amplamente utilizadas, estejam consistentes e muito bem testadas. Dessa forma não é necessário utilizar uma chamada real para a base de dados e nem subir um container específico somente para os testes.
+Um exemplo mais claro, utilizado aqui nessa solução, é o método Do da biclioteca [http](https://pkg.go.dev/net/http) em que é executada uma requição http para a URL informada no método [http.NewRequestWithContext](https://pkg.go.dev/net/http#NewRequestWithContext) [pacote internal/adapters/handler/routes/quote/quote.go]. Não é necessário de fato enviar a requisição para um endpoint verdadeiro para realizar os testes. Bascara criar o mock do método em um MockedAdapter, como abaixo:
+
+	mockedHttp = &httpH.MockedAdapter{
+		DoFn: func(req *http.Request) (*http.Response, error) {
+			return &http.Response{}, nil
+		},
+		CloseFn: func() error {
+			return nil
+		},
+	}
+Quando a aplicação, em modo de teste, realizar a chamada ao método Do, na verdade ela irá invocar o método DoFn que está parametrizado com um retorno personalizado.
+Da mesma forma, para testar o erro da chamada, basta informar que no parâmetro error, deve ser retornado um erro. Como se o método Do do pacote http estivesse informando um erro real quando na verdade é um erro simulado, como exemplificado abaixo:
+
+	mockedHttp = &httpH.MockedAdapter{
+		DoFn: func(req *http.Request) (*http.Response, error) {
+			return nil, errors.New("Ocorreu um erro")
+		},
+	}
+Por fim, para o pacote quote [internal/adapters/handler/routes/quote/quote.go] foram realizados os testes com cobertura de 100%. Isso pode ser conferido executando o comando make test na raiz do projeto.
