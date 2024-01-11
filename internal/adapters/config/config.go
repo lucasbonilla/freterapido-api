@@ -14,6 +14,10 @@ type Adapter struct {
 }
 
 func NewAdpter() *Adapter {
+	return &Adapter{}
+}
+
+func (cA *Adapter) InitConfig() error {
 	viper.SetDefault("api.port", "8080")
 	viper.SetDefault("database.host", "localhost")
 	viper.SetDefault("database.port", "5432")
@@ -23,7 +27,7 @@ func NewAdpter() *Adapter {
 	err := viper.ReadInConfig()
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return nil
+			return err
 		}
 	}
 
@@ -47,11 +51,11 @@ func NewAdpter() *Adapter {
 		viper.GetInt("freterapido_api.zipcode"),
 	)
 
-	return &Adapter{
-		APIConfig:      apiConfig,
-		DBConfig:       dbConfig,
-		APIFreterapido: freterapidoAPI,
-	}
+	cA.APIConfig = apiConfig
+	cA.DBConfig = dbConfig
+	cA.APIFreterapido = freterapidoAPI
+
+	return nil
 }
 
 func (cA *Adapter) GetDB() *db.Config {
