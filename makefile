@@ -1,6 +1,5 @@
 .PHONY: default run build test docs clean
 APP_NAME=freterapido-api
-DOCKER_RM=
 
 default: run-with-docs
 
