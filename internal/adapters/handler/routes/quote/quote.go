@@ -39,15 +39,16 @@ func NewAdapter(db ports.Postgres, http ports.Http, message ports.Message, core 
 func (qA *Adapter) Quote(ctx *gin.Context) {
 	var request *APIReq.Request
 	requestToBind := APIReq.Request{}
-	var ok bool
 	reqBind, err := qA.utils.BindJSON(ctx, &requestToBind)
 	if err != nil {
 		qA.logger.Errorf("erro json malformatado: %v", err.Error())
 		qA.message.SendError(ctx, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
-	if request, ok = reqBind.(*APIReq.Request); !ok {
+	var okAssertion bool
+	if request, okAssertion = reqBind.(*APIReq.Request); !okAssertion {
 		qA.logger.Error("erro json malformatado")
 		qA.message.SendError(ctx, http.StatusInternalServerError,
 			"Ocorreu um erro ao realizar bind da request")
@@ -72,11 +73,13 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 	}
 
 	payload := bytes.NewReader(body)
-
 	req, _ := http.NewRequestWithContext(
 		ctx,
 		http.MethodPost,
-		fmt.Sprintf("https://%s/%s/quote/simulate", qA.config.GetFreterapidoAPI().BaseURL, qA.config.GetFreterapidoAPI().APIVersion),
+		fmt.Sprintf(
+			"https://%s/%s/quote/simulate",
+			qA.config.GetFreterapidoAPI().BaseURL,
+			qA.config.GetFreterapidoAPI().APIVersion),
 		payload)
 
 	resp, err := qA.http.Do(req)
@@ -105,18 +108,19 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 
 		return
 	}
-
 	respAPI := APIResp.NewResponse(&APIresp)
+	qA.persistCarrierQuote(err, APIresp)
+	qA.message.SendSuccessWithCustomKey(ctx, "carrier", "quote", respAPI.Carrier)
+}
 
-	err = qA.db.AddCarrier(APIresp.Dispatchers[0].Offers)
+func (qA *Adapter) persistCarrierQuote(err error, apiResp APIFRResp.Response) {
+	err = qA.db.AddCarrier(apiResp.Dispatchers[0].Offers)
 	if err != nil {
 		qA.logger.Errorf("ocorreu um erro ao armazenar transportadoras na base de dados", err.Error())
 	}
 
-	err = qA.db.AddQuote(APIresp.Dispatchers[0].Offers)
+	err = qA.db.AddQuote(apiResp.Dispatchers[0].Offers)
 	if err != nil {
 		qA.logger.Errorf("ocorreu um erro ao armazenar cotações na base de dados", err.Error())
 	}
-
-	qA.message.SendSuccessWithCustomKey(ctx, "carrier", "quote", respAPI.Carrier)
 }
