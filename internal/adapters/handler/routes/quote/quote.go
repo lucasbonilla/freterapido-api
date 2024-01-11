@@ -47,6 +47,7 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 		return
 	}
 
+	// realiza o type assertion da requisição para poder ser testada e garantida a existência dos dados.
 	var okAssertion bool
 	if request, okAssertion = reqBind.(*APIReq.Request); !okAssertion {
 		qA.logger.Error("erro json malformatado")
@@ -56,6 +57,7 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 		return
 	}
 
+	// valida a existência de todos os dados esperados na requisição
 	if err := qA.core.ValidateAPIRequest(*request); len(err) != 0 {
 		qA.logger.Errorf("erro de validação: %v", err)
 		qA.message.SendErrors(ctx, http.StatusBadRequest, err)
@@ -109,6 +111,8 @@ func (qA *Adapter) Quote(ctx *gin.Context) {
 		return
 	}
 	respAPI := APIResp.NewResponse(&APIresp)
+
+	// realiza a persistência dos dados na base de dados
 	qA.persistCarrierQuote(err, APIresp)
 	qA.message.SendSuccessWithCustomKey(ctx, "carrier", "quote", respAPI.Carrier)
 }

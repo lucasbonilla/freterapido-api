@@ -25,6 +25,7 @@ func NewAdapter(dbPostgres ports.Postgres, router ports.Router, configP ports.Co
 }
 
 func (aA *Adapter) Run() {
+	// inicializa configurações da base de dados
 	aA.dbPostgres.InitConn()
 	err := aA.dbPostgres.Ping()
 	if err != nil {
@@ -33,6 +34,7 @@ func (aA *Adapter) Run() {
 		return
 	}
 
+	// inicializa rotas
 	aA.router.InitializeRoutes()
 	err = aA.router.Serve(fmt.Sprintf(":%s", aA.config.GetServerPort()))
 	if err != nil {
