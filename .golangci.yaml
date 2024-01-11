@@ -15,7 +15,6 @@ linters:
     - durationcheck
     - exportloopref
     - forcetypeassert
-    - funlen
     - gochecknoglobals
     - gochecknoinits
     - gocognit
