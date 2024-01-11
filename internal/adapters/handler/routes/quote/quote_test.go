@@ -17,8 +17,15 @@ import (
 	"github.com/lucasbonilla/freterapido-api/internal/adapters/utils"
 	"github.com/lucasbonilla/freterapido-api/internal/core"
 	"github.com/lucasbonilla/freterapido-api/internal/ports"
+	apiConfig "github.com/lucasbonilla/freterapido-api/internal/schemas/api"
+	dbConfig "github.com/lucasbonilla/freterapido-api/internal/schemas/db"
+	freterapidoConfig "github.com/lucasbonilla/freterapido-api/internal/schemas/freterapido"
 	"github.com/lucasbonilla/freterapido-api/internal/schemas/message/request/api"
 	"github.com/lucasbonilla/freterapido-api/internal/schemas/message/response/freterapidoapi"
+)
+
+const (
+	zipcode = 10101000
 )
 
 func TestQuote(t *testing.T) {
@@ -36,7 +43,11 @@ func TestQuote(t *testing.T) {
 		SendErrorFn:                func(ctx *gin.Context, code int, msg string) { return },
 		SendErrorsFn:               func(ctx *gin.Context, code int, msg []string) { return },
 	}
-	configP = config.NewMockedAdapter()
+	configP = &config.MockedAdapter{
+		APIConfig:      apiConfig.NewConfig("8080", "test"),
+		DBConfig:       dbConfig.NewConfig("local-test", "15432", "db-test", "db-test", "postgres-test"),
+		APIFreterapido: freterapidoConfig.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", zipcode),
+	}
 	mockedPostgres = &postgres.MockedAdapter{
 		InitConnFn: func() error {
 			return nil
@@ -135,7 +146,11 @@ func TestQuoteError(t *testing.T) {
 			SendErrorFn:                func(ctx *gin.Context, code int, msg string) { return },
 			SendErrorsFn:               func(ctx *gin.Context, code int, msg []string) { return },
 		}
-		configP = config.NewMockedAdapter()
+		configP = &config.MockedAdapter{
+			APIConfig:      apiConfig.NewConfig("8080", "test"),
+			DBConfig:       dbConfig.NewConfig("local-test", "15432", "db-test", "db-test", "postgres-test"),
+			APIFreterapido: freterapidoConfig.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", zipcode),
+		}
 		mockedPostgres = &postgres.MockedAdapter{}
 		mockedHttp = &httpH.MockedAdapter{}
 		coreP = &core.MockedAdapter{}
@@ -169,7 +184,11 @@ func TestQuoteError(t *testing.T) {
 			SendErrorFn:                func(ctx *gin.Context, code int, msg string) { return },
 			SendErrorsFn:               func(ctx *gin.Context, code int, msg []string) { return },
 		}
-		configP = config.NewMockedAdapter()
+		configP = &config.MockedAdapter{
+			APIConfig:      apiConfig.NewConfig("8080", "test"),
+			DBConfig:       dbConfig.NewConfig("local-test", "15432", "db-test", "db-test", "postgres-test"),
+			APIFreterapido: freterapidoConfig.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", zipcode),
+		}
 		mockedPostgres = &postgres.MockedAdapter{}
 		mockedHttp = &httpH.MockedAdapter{}
 		coreP = &core.MockedAdapter{}
@@ -204,7 +223,11 @@ func TestQuoteError(t *testing.T) {
 			SendErrorFn:                func(ctx *gin.Context, code int, msg string) { return },
 			SendErrorsFn:               func(ctx *gin.Context, code int, msg []string) { return },
 		}
-		configP = config.NewMockedAdapter()
+		configP = &config.MockedAdapter{
+			APIConfig:      apiConfig.NewConfig("8080", "test"),
+			DBConfig:       dbConfig.NewConfig("local-test", "15432", "db-test", "db-test", "postgres-test"),
+			APIFreterapido: freterapidoConfig.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", zipcode),
+		}
 		mockedPostgres = &postgres.MockedAdapter{}
 		mockedHttp = &httpH.MockedAdapter{}
 		coreP = &core.MockedAdapter{
@@ -272,7 +295,11 @@ func TestQuoteError(t *testing.T) {
 			SendErrorFn:                func(ctx *gin.Context, code int, msg string) { return },
 			SendErrorsFn:               func(ctx *gin.Context, code int, msg []string) { return },
 		}
-		configP = config.NewMockedAdapter()
+		configP = &config.MockedAdapter{
+			APIConfig:      apiConfig.NewConfig("8080", "test"),
+			DBConfig:       dbConfig.NewConfig("local-test", "15432", "db-test", "db-test", "postgres-test"),
+			APIFreterapido: freterapidoConfig.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", zipcode),
+		}
 		mockedPostgres = &postgres.MockedAdapter{}
 		mockedHttp = &httpH.MockedAdapter{}
 		coreP = &core.MockedAdapter{
@@ -343,7 +370,11 @@ func TestQuoteError(t *testing.T) {
 			SendErrorFn:                func(ctx *gin.Context, code int, msg string) { return },
 			SendErrorsFn:               func(ctx *gin.Context, code int, msg []string) { return },
 		}
-		configP = config.NewMockedAdapter()
+		configP = &config.MockedAdapter{
+			APIConfig:      apiConfig.NewConfig("8080", "test"),
+			DBConfig:       dbConfig.NewConfig("local-test", "15432", "db-test", "db-test", "postgres-test"),
+			APIFreterapido: freterapidoConfig.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", zipcode),
+		}
 		mockedPostgres = &postgres.MockedAdapter{}
 		mockedHttp = &httpH.MockedAdapter{
 			DoFn: func(req *http.Request) (*http.Response, error) {
@@ -417,7 +448,11 @@ func TestQuoteError(t *testing.T) {
 			SendErrorFn:                func(ctx *gin.Context, code int, msg string) { return },
 			SendErrorsFn:               func(ctx *gin.Context, code int, msg []string) { return },
 		}
-		configP = config.NewMockedAdapter()
+		configP = &config.MockedAdapter{
+			APIConfig:      apiConfig.NewConfig("8080", "test"),
+			DBConfig:       dbConfig.NewConfig("local-test", "15432", "db-test", "db-test", "postgres-test"),
+			APIFreterapido: freterapidoConfig.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", zipcode),
+		}
 		mockedPostgres = &postgres.MockedAdapter{}
 		mockedHttp = &httpH.MockedAdapter{
 			DoFn: func(req *http.Request) (*http.Response, error) {
@@ -498,7 +533,11 @@ func TestQuoteError(t *testing.T) {
 			SendErrorFn:                func(ctx *gin.Context, code int, msg string) { return },
 			SendErrorsFn:               func(ctx *gin.Context, code int, msg []string) { return },
 		}
-		configP = config.NewMockedAdapter()
+		configP = &config.MockedAdapter{
+			APIConfig:      apiConfig.NewConfig("8080", "test"),
+			DBConfig:       dbConfig.NewConfig("local-test", "15432", "db-test", "db-test", "postgres-test"),
+			APIFreterapido: freterapidoConfig.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", zipcode),
+		}
 		mockedPostgres = &postgres.MockedAdapter{}
 		mockedHttp = &httpH.MockedAdapter{
 			DoFn: func(req *http.Request) (*http.Response, error) {
@@ -582,7 +621,11 @@ func TestQuoteError(t *testing.T) {
 			SendErrorFn:                func(ctx *gin.Context, code int, msg string) { return },
 			SendErrorsFn:               func(ctx *gin.Context, code int, msg []string) { return },
 		}
-		configP = config.NewMockedAdapter()
+		configP = &config.MockedAdapter{
+			APIConfig:      apiConfig.NewConfig("8080", "test"),
+			DBConfig:       dbConfig.NewConfig("local-test", "15432", "db-test", "db-test", "postgres-test"),
+			APIFreterapido: freterapidoConfig.NewConfig("base-url-test", "v-test", "abcd1234", "dcba4321", "1234abcd", zipcode),
+		}
 		mockedPostgres = &postgres.MockedAdapter{
 			AddCarrierFn: func(offers []freterapidoapi.Offers) error {
 				return errors.New("Ocorreu um erro")
