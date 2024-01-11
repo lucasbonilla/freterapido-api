@@ -53,8 +53,7 @@ func main() {
 	messageP = messageResponse.NewAdapter()
 	quoteP = quote.NewAdapter(dbPostgresP, httpP, messageP, coreP, configP, utilsP,
 		loggerP)
-	metricsP = metrics.NewAdapter(dbPostgresP, httpP, messageP, coreP, configP,
-		utilsP, loggerP)
+	metricsP = metrics.NewAdapter(dbPostgresP, messageP, configP, utilsP, loggerP)
 	routerP = router.NewAdapter(quoteP, metricsP)
 
 	appP = app.NewAdapter(dbPostgresP, routerP, configP, loggerP)

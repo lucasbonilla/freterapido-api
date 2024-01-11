@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,6 @@ import (
 
 type Adapter struct {
 	db      ports.Postgres
-	http    ports.Http
 	message ports.Message
 	core    ports.Core
 	config  ports.Config
@@ -18,13 +18,11 @@ type Adapter struct {
 	logger  ports.Logger
 }
 
-func NewAdapter(db ports.Postgres, http ports.Http, message ports.Message, core ports.Core, config ports.Config,
-	utils ports.Utils, logger ports.Logger) *Adapter {
+func NewAdapter(db ports.Postgres, message ports.Message, config ports.Config, utils ports.Utils,
+	logger ports.Logger) *Adapter {
 	return &Adapter{
 		db:      db,
-		http:    http,
 		message: message,
-		core:    core,
 		config:  config,
 		utils:   utils,
 		logger:  logger,
@@ -40,14 +38,20 @@ func (mA *Adapter) Metrics(ctx *gin.Context) {
 	if lastQuotes != "" {
 		limitConv, err := strconv.Atoi(lastQuotes)
 		if err != nil {
+			mA.logger.Errorf("erro ao capturar last_quotes: %v", err.Error())
+			mA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
 
+			return
 		}
 		limit = &limitConv
 	}
 	if page != "" && lastQuotes != "" {
 		page, err := strconv.Atoi(page)
 		if err != nil {
+			mA.logger.Errorf("erro ao capturar page: %v", err.Error())
+			mA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
 
+			return
 		}
 		if page >= 1 {
 			calcOffset := (limitConv * page) - limitConv
