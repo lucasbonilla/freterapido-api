@@ -10,6 +10,7 @@ import (
 	"github.com/lucasbonilla/freterapido-api/internal/adapters/handler/http/response"
 	messageResponse "github.com/lucasbonilla/freterapido-api/internal/adapters/handler/message/response"
 	"github.com/lucasbonilla/freterapido-api/internal/adapters/handler/router"
+	"github.com/lucasbonilla/freterapido-api/internal/adapters/handler/routes/metrics"
 	"github.com/lucasbonilla/freterapido-api/internal/adapters/handler/routes/quote"
 	"github.com/lucasbonilla/freterapido-api/internal/adapters/logger"
 	"github.com/lucasbonilla/freterapido-api/internal/adapters/utils"
@@ -32,6 +33,7 @@ func main() {
 	var coreP ports.Core
 	var messageP ports.Message
 	var quoteP ports.Quote
+	var metricsP ports.Metrics
 	var routerP ports.Router
 
 	var appP ports.App
@@ -49,8 +51,11 @@ func main() {
 	httpP = http.NewAdapter(httpCli, httpReq, httpRes)
 
 	messageP = messageResponse.NewAdapter()
-	quoteP = quote.NewAdapter(dbPostgresP, httpP, messageP, coreP, configP, utilsP)
-	routerP = router.NewAdapter(quoteP)
+	quoteP = quote.NewAdapter(dbPostgresP, httpP, messageP, coreP, configP, utilsP,
+		loggerP)
+	metricsP = metrics.NewAdapter(dbPostgresP, httpP, messageP, coreP, configP,
+		utilsP, loggerP)
+	routerP = router.NewAdapter(quoteP, metricsP)
 
 	appP = app.NewAdapter(dbPostgresP, routerP, configP, loggerP)
 	appP.Run()

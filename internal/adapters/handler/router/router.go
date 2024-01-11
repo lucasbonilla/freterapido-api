@@ -6,13 +6,15 @@ import (
 )
 
 type Adapter struct {
-	gin   *gin.Engine
-	quote ports.Quote
+	gin     *gin.Engine
+	quote   ports.Quote
+	metrics ports.Metrics
 }
 
-func NewAdapter(quote ports.Quote) *Adapter {
+func NewAdapter(quote ports.Quote, metrics ports.Metrics) *Adapter {
 	return &Adapter{
-		quote: quote,
+		quote:   quote,
+		metrics: metrics,
 	}
 }
 
@@ -23,6 +25,7 @@ func (gA *Adapter) InitializeRoutes() {
 	v1 := gA.gin.Group(basePath)
 	{
 		v1.POST("quote", gA.quote.Quote)
+		v1.GET("metrics", gA.metrics.Metrics)
 	}
 }
 
