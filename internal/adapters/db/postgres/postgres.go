@@ -138,7 +138,7 @@ func (dbA *Adapter) GetTotalQuotes(limit *int, offset *int) (APIResp.TotalQuotes
 	SELECT
 		c.carrier_name,
 		q.id_carrier,
-		SUM(price_quote) AS total_price_quote
+		ROUND(SUM(price_quote)::NUMERIC, 2) AS total_price_quote
 	FROM
 		freterapidoapi."quote" q
 	JOIN freterapidoapi.carrier c ON
@@ -176,8 +176,7 @@ func (dbA *Adapter) GetAverageQuotes(limit *int, offset *int) (APIResp.TotalQuot
 	SELECT
 			c.carrier_name,
 			q.id_carrier,
-			ROUND(AVG(price_quote)::NUMERIC,
-		2 ) AS average_price_quote
+			ROUND(AVG(price_quote)::NUMERIC, 2) AS average_price_quote
 	FROM
 			freterapidoapi."quote" q
 	JOIN freterapidoapi.carrier c ON

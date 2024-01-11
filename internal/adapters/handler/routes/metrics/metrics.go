@@ -33,10 +33,11 @@ func (mA *Adapter) Metrics(ctx *gin.Context) {
 	var limit *int
 	var offset *int
 	var limitConv int
+	var err error
 	lastQuotes := ctx.Query("last_quotes")
 	page := ctx.Query("page")
 	if lastQuotes != "" {
-		limitConv, err := strconv.Atoi(lastQuotes)
+		limitConv, err = strconv.Atoi(lastQuotes)
 		if err != nil {
 			mA.logger.Errorf("erro ao capturar last_quotes: %v", err.Error())
 			mA.message.SendError(ctx, http.StatusInternalServerError, err.Error())
